@@ -1,0 +1,28 @@
+{% extends "base.twig" %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-offset-2 col-sm-8">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Тип</th>
+                    <th>Всего </th>
+                    <th>За месяц</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for event in events %}
+                    <tr>
+                        <td><a href="/stats/event/{{ event.ideventname }}">{{ event.type }}</a></td>
+                        <td>{{ event.total }}</td>
+                        <td>{{ event.month }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+{% endblock %}

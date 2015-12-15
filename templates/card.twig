@@ -1,0 +1,34 @@
+{% extends "base.twig" %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Начало</th>
+                    <th>Конец</th>
+                    <th>Тип карты</th>
+                    <th>Расписание</th>
+                    <th>ФИО</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for card in cards %}
+                    <tr>
+                        <th scope="row"><a href="/card/{{ card.number }}">{{ card.number }}</a></th>
+                        <td>{{ card.time_start }}</td>
+                        <td>{{ card.time_end }}</td>
+                        <td>{{ card.cardtype }}</td>
+                        <td>{{ card.sheduleid }}</td>
+                        <td>{{ card.ownername }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+{% endblock %}

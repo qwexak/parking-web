@@ -88,7 +88,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 	//JSON
 	if ($_SERVER['REQUEST_URI'] = '/getEvents') {
 		$events = $_POST['events'];
-		if (count($events > 0)) {
+		if (count($events) > 0) {
 			$events = implode(',', $events);
 			echo json_encode(Fetch($config['query']['getEventsByIDs'], [ 'ids' => $events ]));
 		}
@@ -98,33 +98,40 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 		//=============================card=============================
 		if (isset($action[1])) {
 			$res = Fetch($config['query']['getEventsByNumber'], [ 'number' => $action[1] ]);
-			echo $twig->render('log_detail.twig', array( 'cards' => $res, 'env' => $env ));
+			$twig->display('log_detail.twig', array( 'cards' => $res, 'env' => $env ));
 		} else {
 			$res = Fetch($config['query']['getSplash'][$env['db']['alias']], [ 'limit' => 500 ]);
-			echo $twig->render('card.twig', array( 'cards' => $res, 'env' => $env ));
+			$twig->display('card.twig', array( 'cards' => $res, 'env' => $env ));
 		}
+	} elseif ($action[0] == 'test') {
+		//=============================test=============================
+		echo "<pre>" . print_r($config, true) . "</pre>>";
 	} elseif ($action[0] == 'db') {
 		//=============================db=============================
-		$_SESSION['db'] = $config['dbs'][$action[1]];
-		$url = (isset($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : '/';
-		header('Location: ' . $url);
+		if (isset($config['dbs'][$action[1]])) {
+			$_SESSION['db'] = $config['dbs'][$action[1]];
+			$url = (isset($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : '/';
+			header('Location: ' . $url);
+		} else {
+			header("HTTP/1.0 500 Internal Server Error ");
+		}
 	} elseif ($action[0] == 'stats') {
 		//=============================stats=============================
 		if (isset($action[1]) && $action[1] == 'event') {
 			$res = Fetch($config['query']['getEventsByID'], [ 'id' => $action[2] ]);
-			echo $twig->render('log_detail.twig', array( 'cards' => $res, 'env' => $env ));
+			$twig->display('log_detail.twig', array( 'cards' => $res, 'env' => $env ));
 		} elseif (isset($action[1]) && $action[1] == 'source') {
 			$res = Fetch($config['query']['getEventsBySourceID'], [ 'id' => $action[2] ]);
-			echo $twig->render('log_detail.twig', array( 'cards' => $res, 'env' => $env ));
+			$twig->display('log_detail.twig', array( 'cards' => $res, 'env' => $env ));
 		} else {
 			$month = date('m');
 			$res = Fetch($config['query']['getEventsStats'], [ 'month' => $month ]);
-			echo $twig->render('stats.twig', array( 'events' => $res, 'env' => $env ));
+			$twig->display('stats.twig', array( 'events' => $res, 'env' => $env ));
 		}
 	} else {
 		$eventsid = Fetch($config['query']['getEventsID'], [ 'limit' => 150 ]);
 		$res = Fetch($config['query']['getEvents'], [ 'limit' => 30 ]);
-		echo $twig->render('log_detail.twig', array( 'cards' => $res, 'events' => $eventsid, 'main' => true, 'env' => $env ));
+		$twig->display('log_detail.twig', array( 'cards' => $res, 'events' => $eventsid, 'main' => true, 'env' => $env ));
 	}
 }
 
